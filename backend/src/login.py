@@ -5,18 +5,20 @@ from flask_jwt_extended import (
 )
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
+from core import app
 import json
+import hashlib
+import os, sys
 
-app = Flask(__name__)
+#app = Flask(__name__)
 
 # Setup the Flask-JWT-Extended extension
-app.config['JWT_SECRET_KEY'] = 'd1c06464c4'  # Change this!
+
+#app.config['JWT_SECRET_KEY'] = os.getenv('secretKey')  # Change this!
+#appKey = "17cb166f71686aca8456fdd837187452"
 jwt = JWTManager(app)
 
 
-# Provide a method to create access tokens. The create_access_token()
-# function is used to actually generate the token, and you can return
-# it to the caller however you choose.
 @app.route('/login', methods=['POST'])
 def login():
     credentials=RequestsHTTPTransport(
@@ -24,7 +26,7 @@ def login():
     use_json=True,
     headers={
         "Content-type": "application/json",
-        "x-hasura-admin-secret": "d1c06464c4"
+        "x-hasura-admin-secret": secretKey
     },
     )
 
@@ -61,25 +63,11 @@ def login():
     ''')
 
     id = json.loads(json.dumps(client.execute(query,params)))
+
     if len(id['users']):
-       
        npm = id['users'][0]['npm']
        # Identity can be any data that is json serializable
        access_token = create_access_token(identity=npm)
        return jsonify(access_token=access_token), 200
-    
     else:
        return jsonify({"msg": "Bad username or password"}), 401
-
-# Protect a view with jwt_required, which requires a valid access token
-# in the request to access.
-@app.route('/protected', methods=['GET'])
-@jwt_required
-def protected():
-    # Access the identity of the current user with get_jwt_identity
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
-
-
-if __name__ == '__main__':
-    app.run()
