@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 import login
-import scanner
+import docxscanner
 import hashlib, os, sys
 
 app = Flask(__name__)
@@ -13,4 +13,4 @@ if __name__ == '__main__':
       sys.exit("error key!")
     else:
       print("\n Welcome To UGLPeC backend systems ... \n apps started in few minutes ... \n")
-      app.run(debug=True, host='0.0.0.0')
+      app.run(debug=False, host='0.0.0.0')

@@ -10,12 +10,6 @@ import json
 import hashlib
 import os, sys
 
-#app = Flask(__name__)
-
-# Setup the Flask-JWT-Extended extension
-
-#app.config['JWT_SECRET_KEY'] = os.getenv('secretKey')  # Change this!
-#appKey = "17cb166f71686aca8456fdd837187452"
 jwt = JWTManager(app)
 
 
